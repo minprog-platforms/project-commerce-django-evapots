@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.forms import ModelForm
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .models import User, Listings, Bids, Comments, CATEGORIES
 
 
@@ -27,7 +28,6 @@ class ListingForm(ModelForm):
   class Meta:
     model = Listings
     fields = ['listing_title', 'current_price', 'description', 'category', 'image']
-
 
 class BidForm(ModelForm):
   class Meta:
@@ -70,7 +70,7 @@ def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
-
+@login_required
 def category_index(request, category):
      return render(request, "auctions/category_index.html", {
         "category": category,
@@ -79,6 +79,7 @@ def category_index(request, category):
     })
 
 
+@login_required
 def category(request):
      return render(request, "auctions/category.html", {
         "categories": all_categories(),
@@ -89,7 +90,8 @@ def category(request):
 def listing_page(request, listing):
 
     indiv_listing = Listings.objects.get(listing_title=listing)
-    user = User.objects.get(username=request.user)
+    # user = User.objects.get(username=request.user)
+    current_winner = indiv_listing.owner
 
     if request.method == "POST":
         if 'button_bid' in request.POST:
@@ -112,8 +114,8 @@ def listing_page(request, listing):
                     "listing": indiv_listing, 
                     "bid_form": BidForm(),
                     "comment_form": CommentForm(),
-                    "user": user,
-                    "tot_watchlist": count_watchlist()
+                    "tot_watchlist": count_watchlist(),
+                    "winner": current_winner
                 })
         elif 'button_comment' in request.POST:
             form = CommentForm(request.POST)
@@ -131,15 +133,19 @@ def listing_page(request, listing):
                 indiv_listing.watchlist = False
             indiv_listing.save()
             return HttpResponseRedirect(reverse("listing_page", args=[listing]))
+        elif 'button_close' in request.POST:
+            indiv_listing.closed = True
+            current_winner = indiv_listing.bids.get(new_bid = indiv_listing.current_price).user
+            indiv_listing.save()
+            return HttpResponseRedirect(reverse("listing_page", args=[listing]))
     else:
         return render(request, "auctions/listing_page.html", {
                 "listing": indiv_listing, 
                 "bid_form": BidForm(),
                 "comment_form": CommentForm(),
-                "user": user,
-                "tot_watchlist": count_watchlist()
+                "tot_watchlist": count_watchlist(),
+                "winner": current_winner
             })
-
 
 def register(request):
     if request.method == "POST":
@@ -167,7 +173,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
     
-    
+@login_required
 def create(request):
     if request.method == "POST":
         user = User.objects.get(username=request.user)
@@ -189,6 +195,7 @@ def create(request):
             "tot_watchlist": count_watchlist()
         })
 
+@login_required
 def watchlist(request):
      return render(request, "auctions/watchlist.html", {
         "listings": Listings.objects.all(),
