@@ -1,10 +1,11 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+    <h2> Listings in Category: {{ category }}</h2>
 
+    <ul>
     {% for listing in listings %}
-        {% if not listing.closed %}
+        {% if listing.category == category %}
             <div id = "menu" onclick='location.href="{% url 'listing_page' listing=listing.listing_title %}";' class="container border p-2 m-2">
                 <div class="row">
                     <div class="col">
@@ -20,6 +21,7 @@
             </div>
         {% endif %}
     {% endfor %}
+    </ul>
     
 
 {% endblock %}

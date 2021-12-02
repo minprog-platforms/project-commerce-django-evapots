@@ -1,0 +1,66 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h3>Listing: {{ listing.listing_title }}</h3>
+
+    {% if user.is_authenticated %}
+    <form action="{% url 'listing_page' listing=listing.listing_title %}" method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <input type="submit" name="button_watchlist" class="btn btn-primary" value="watchlist">
+      </div>
+    </form>
+     
+    {% endif %}
+
+    <img src="{{ listing.image }}" alt="image" style="width: 300px; height: auto">
+
+    <p>{{ listing.description }}</p>
+    <h4> Current Price: ${{ listing.current_price }}</h4>
+    
+    {% if user.is_authenticated %}
+        <form action="{% url 'listing_page' listing=listing.listing_title %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="bid">{{ listing.bids.count }} bid(s) so far. Your bid is the current bid</label>
+            </div>
+            <div class="form-group">
+              {{ bid_form }}
+            </div>
+            <div class="form-group">
+              <input type="submit" name="button_bid" class="btn btn-primary" value="Place Bid">
+            </div>
+        </form>
+    {% endif %}
+
+    <h4>Details</h4>
+    <ul>
+      <li>Listed by: {{ user }}</li>
+      <li>Category: {{ listing.category }} </li>
+    </ul>
+
+    <h4>Comments</h4>
+    {% for comment in listing.comments.all %}
+        <div class="container m3-5 p-2 border">
+            <p><strong>{{ comment.user }} - {{ comment.comment_title }}</strong> </p>
+            <i>{{ comment.time }}</i>
+            <p class="mt-n2">{{ comment.comment }}</p>
+        </div>
+    {% endfor %}
+
+
+    {% if user.is_authenticated %}
+        <form action="{% url 'listing_page' listing=listing.listing_title %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+              {{ comment_form }}
+            </div>
+            <div class="form-group">
+              <input type="submit" name="button_comment" class="btn btn-primary" value="Place Comment">
+            </div>
+        </form>
+    {% endif %}
+
+
+
+{% endblock %}
