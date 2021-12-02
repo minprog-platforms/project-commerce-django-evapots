@@ -21,13 +21,21 @@ When the logged in user is on an individual listenings page of his/her own, than
 
 ![Overview](/images/Commerce.png)
 
-TODO 2: Anaylise which models you are going to need and create Class Diagram 
-- each model maps to a single database table.
-- each attribute of the model represents a database field.
+**Class Diagram** 
+
+Four models, which all relate to a single database table, are created in this commerce webapplication.
+- The *user* class contains all info from the user logged in into the web application
+- The *bids* class contains all info of one particular bid, it also contains the info of the *user* 
+- The *comments* class gathers all info of the comments, it also contains the info of the *user* 
+- The *listings* class represents all information about one individual listing, it also contains the info of the *user* who is the owner of the listed item. More over, it saves all bidding by objects of the *bids* class and it also saves all comments by objects of the *comments* class.
+
+The complete overview is displayed in the image below.
+
+![Overview](/images/ClassDiagram.png)
 
 
-TODO 3: Make an overview of which pages will be using what information from the database
+**Overview of database-info pro website page** 
 
-## Getting Started
+The table below displays an overview of the database info which is used at each part of the website.
 
-TODO: Describe steps to install requirements and get the application running.
+![Overview](/images/Database.png)
