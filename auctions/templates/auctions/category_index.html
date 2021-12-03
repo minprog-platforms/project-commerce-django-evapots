@@ -7,7 +7,7 @@
     {% for listing in listings %}
         {% if listing.category == category %}
             <div id = "menu" onclick='location.href="{% url 'listing_page' listing=listing.listing_title %}";' class="container border p-2 m-2">
-                <div class="row">
+                <div id = "mainpage" class="row">
                     <div class="col">
                         <img src="{{ listing.image }}" alt="image" style="width: 300px; height: auto">
                     </div>

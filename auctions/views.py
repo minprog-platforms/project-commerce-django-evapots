@@ -28,6 +28,11 @@ class ListingForm(ModelForm):
   class Meta:
     model = Listings
     fields = ['listing_title', 'current_price', 'description', 'category', 'image']
+    labels = {
+            'listing_title': 'Title of Listing',
+    'current_price': 'Initial Price',
+    'image': 'URL of Image (optional)'
+        }
 
 class BidForm(ModelForm):
   class Meta:

@@ -1,18 +1,20 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    <br>
     <h2>Active Listings</h2>
+    <br>
 
     {% for listing in listings %}
         {% if not listing.closed %}
             <div id = "menu" onclick='location.href="{% url 'listing_page' listing=listing.listing_title %}";' class="container border p-2 m-2">
-                <div class="row">
+                <div id = "mainpage" class="row">
                     {% if listing.image != "" %} 
-                        <div class="col">
-                            <img src="{{ listing.image }}" alt="image" style="width: 300px; height: auto">
-                        </div>
+                    <div class="col padding-0">
+                        <img src="{{ listing.image }}" alt="image" style="width: 300px; height: auto">
+                    </div>
                     {% endif %}
-                    <div class="col text-left">
+                    <div class="col text-left padding-0">
                         <h2 class="display-4">{{ listing.listing_title }}</h2>
                         <h4>Price: ${{ listing.current_price }}</h4>
                         {{ listing.description }}

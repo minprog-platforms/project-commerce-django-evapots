@@ -1,10 +1,11 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h3>Listing: {{ listing.listing_title }}</h3>
-
 
     {% if listing.closed == True %}
+    <br>
+    <h2>Listing: {{ listing.listing_title }}</h2>
+    <br>
         {% if user == winner and user.is_authenticated %}
             <h4> You have won the auction! </h4>
         {% else %}
@@ -13,30 +14,38 @@
    
 
     {% else %}
+    
+    <br>
+    <h2>Listing: {{ listing.listing_title }} 
+   </h2>
 
-        {% if user.is_authenticated %}
-        <form action="{% url 'listing_page' listing=listing.listing_title %}" method="POST">
-          {% csrf_token %}
-          <div class="form-group">
-            <input type="submit" name="button_watchlist" class="btn btn-primary" value="watchlist">
-          </div>
-        </form>
-        {% endif %}
-
-        {% if user.is_authenticated %}
-          {% if user == listing.owner %}
+ <p>
+    {% if user.is_authenticated %}
             <form action="{% url 'listing_page' listing=listing.listing_title %}" method="POST">
               {% csrf_token %}
               <div class="form-group">
-                <input type="submit" name="button_close" class="btn btn-primary" value="close auction">
+                <input type="submit" name="button_watchlist" class="btn btn-secondary btn-sm" value="watchlist">
               </div>
             </form>
-          {% endif %}
-        {% endif %}
+    {% endif %}
 
-        <img src="{{ listing.image }}" alt="image" style="width: 300px; height: auto">
+    {% if user.is_authenticated %}
+      {% if user == listing.owner %}
+            <form id = "form2" action="{% url 'listing_page' listing=listing.listing_title %}" method="POST">
+              {% csrf_token %}
+              <div class="form-group">
+                <input type="submit" name="button_close" class="btn btn-outline-danger " value="close auction">
+              </div>
+            </form>
+      {% endif %}
+    {% endif %}
+  </p>
+
+  <img src="{{ listing.image }}" alt="image" style="width: 500px; height: auto">
 
         <p>{{ listing.description }}</p>
+
+        <br>
         <h4> Current Price: ${{ listing.current_price }}</h4>
         
         {% if user.is_authenticated %}
@@ -48,37 +57,50 @@
                 <div class="form-group">
                   {{ bid_form }}
                 </div>
+                <p>
                 <div class="form-group">
                   <input type="submit" name="button_bid" class="btn btn-primary" value="Place Bid">
                 </div>
+              </p>
             </form>
         {% endif %}
-
+        <br>
         <h4>Details</h4>
         <ul>
           <li>Listed by: {{ listing.owner }}</li>
           <li>Category: {{ listing.category }} </li>
         </ul>
 
+        <br>
         <h4>Comments</h4>
+        <p>
         {% for comment in listing.comments.all %}
-            <div class="container m3-5 p-2 border">
+            <div class="container m-1 p-2 border">
                 <p><strong>{{ comment.user }} - {{ comment.comment_title }}</strong> </p>
                 <i>{{ comment.time }}</i>
                 <p class="mt-n2">{{ comment.comment }}</p>
             </div>
         {% endfor %}
-
+        </p>
 
         {% if user.is_authenticated %}
             <form action="{% url 'listing_page' listing=listing.listing_title %}" method="POST">
                 {% csrf_token %}
-                <div class="form-group">
-                  {{ comment_form }}
+
+                <div class="container m-1 p-2">
+                  {% for field in comment_form  %}
+                  <div class="row">
+                      <b>{{ field.label_tag }}</b> {{ field }} 
+                    </div>
+                  {% endfor %}
+                  </div>  
                 </div>
+
+                <p>
                 <div class="form-group">
                   <input type="submit" name="button_comment" class="btn btn-primary" value="Place Comment">
                 </div>
+              </p>
             </form>
         {% endif %}
 
